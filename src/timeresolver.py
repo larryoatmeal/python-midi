@@ -1,10 +1,12 @@
 from midi.tempomap import TempoMap
 
+
 class TimeResolver(object):
     """
     iterates over a pattern and analyzes timing information
     the result of the analysis can be used to convert from absolute midi tick to wall clock time (in milliseconds).
     """
+
     def __init__(self, pattern):
         self.pattern = pattern
         self.tempomap = TempoMap(self.pattern)
@@ -20,7 +22,7 @@ class TimeResolver(object):
         # create a tempo map
         self.__init_tempomap()
         # restore original mode
-        if (original_ticks_relative):
+        if original_ticks_relative:
             self.pattern.make_ticks_rel()
 
     def __init_tempomap(self):
@@ -38,6 +40,5 @@ class TimeResolver(object):
         convert absolute midi tick to wall clock time (milliseconds)
         """
         ev = self.tempomap.get_tempo(absolute_tick)
-        ms = ev.msdelay + ((absolute_tick - ev.tick)*ev.mpt)
+        ms = ev.msdelay + ((absolute_tick - ev.tick) * ev.mpt)
         return ms
-    
