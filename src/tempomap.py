@@ -1,3 +1,5 @@
+import midi
+
 class TempoMap(list):
     def __init__(self, stream):
         self.stream = stream
@@ -23,15 +25,26 @@ class TempoMap(list):
             if last:
                 event.msdelay = last.msdelay + \
                     int(last.mpt * (event.tick - last.tick))
+            else:
+                event.msdelay = 0
             last = event
 
     def get_tempo(self, offset=0):
-        last = self[0]
-        for tm in self[1:]:
-            if tm.tick > offset:
-                return last
-            last = tm
-        return last
+        try:
+            last = self[0]
+            for tm in self[1:]:
+                if tm.tick > offset:
+                    return last
+                last = tm
+            return last
+        except IndexError:
+            # no tempo changes specified in midi track
+            last = midi.SetTempoEvent()
+            last.bpm = 120
+            last.mpqn = 500
+            last.mpt = last.mpqn / self.stream.resolution
+            self.add_and_update(last)
+            return last
 
 class EventStreamIterator(object):
     def __init__(self, stream, window):
