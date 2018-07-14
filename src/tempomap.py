@@ -1,7 +1,9 @@
 import midi
 
+
 class TempoMap(list):
     def __init__(self, stream):
+        super().__init__()
         self.stream = stream
 
     def add_and_update(self, event):
@@ -24,7 +26,7 @@ class TempoMap(list):
         for event in self:
             if last:
                 event.msdelay = last.msdelay + \
-                    int(last.mpt * (event.tick - last.tick))
+                                int(last.mpt * (event.tick - last.tick))
             else:
                 event.msdelay = 0
             last = event
@@ -45,6 +47,7 @@ class TempoMap(list):
             last.mpt = last.mpqn / self.stream.resolution
             self.add_and_update(last)
             return last
+
 
 class EventStreamIterator(object):
     def __init__(self, stream, window):
